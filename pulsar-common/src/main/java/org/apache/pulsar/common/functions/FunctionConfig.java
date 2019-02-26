@@ -24,20 +24,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.apache.pulsar.common.functions.ConsumerConfig;
-import org.apache.pulsar.common.functions.Resources;
-import org.apache.pulsar.common.functions.WindowConfig;
+import lombok.*;
 
 @Getter
 @Setter
 @Data
 @EqualsAndHashCode
 @ToString
+@Builder(toBuilder=true)
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FunctionConfig {
 
@@ -77,18 +73,26 @@ public class FunctionConfig {
     private String outputSerdeClassName;
     private String logTopic;
     private ProcessingGuarantees processingGuarantees;
-    private boolean retainOrdering;
+    private Boolean retainOrdering;
     private Map<String, Object> userConfig;
+    // This is a map of secretName(aka how the secret is going to be
+    // accessed in the function via context) to an object that
+    // encapsulates how the secret is fetched by the underlying
+    // secrets provider. The type of an value here can be found by the
+    // SecretProviderConfigurator.getSecretObjectType() method.
+    private Map<String, Object> secrets;
     private Runtime runtime;
-    private boolean autoAck;
-    private int maxMessageRetries = -1;
+    private Boolean autoAck;
+    private Integer maxMessageRetries;
     private String deadLetterTopic;
     private String subName;
-    private int parallelism = 1;
+    private Integer parallelism;
     private Resources resources;
     private String fqfn;
     private WindowConfig windowConfig;
     private Long timeoutMs;
     private String jar;
     private String py;
+    // Whether the subscriptions the functions created/used should be deleted when the functions is deleted
+    private Boolean cleanupSubscription;
 }

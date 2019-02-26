@@ -22,11 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.pulsar.common.functions.ConsumerConfig;
 import org.apache.pulsar.common.functions.FunctionConfig;
 import org.apache.pulsar.common.functions.Resources;
@@ -36,6 +32,9 @@ import org.apache.pulsar.common.functions.Resources;
 @Data
 @EqualsAndHashCode
 @ToString
+@Builder(toBuilder=true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class SinkConfig {
 
     private String tenant;
@@ -55,12 +54,19 @@ public class SinkConfig {
     private Map<String, ConsumerConfig> inputSpecs = new TreeMap<>();
 
     private Map<String, Object> configs;
-    private int parallelism = 1;
+    // This is a map of secretName(aka how the secret is going to be
+    // accessed in the function via context) to an object that
+    // encapsulates how the secret is fetched by the underlying
+    // secrets provider. The type of an value here can be found by the
+    // SecretProviderConfigurator.getSecretObjectType() method.
+    private Map<String, Object> secrets;
+    private Integer parallelism;
     private FunctionConfig.ProcessingGuarantees processingGuarantees;
-    private boolean retainOrdering;
+    private Boolean retainOrdering;
     private Resources resources;
-    private boolean autoAck;
+    private Boolean autoAck;
     private Long timeoutMs;
-
     private String archive;
+    // Whether the subscriptions the functions created/used should be deleted when the functions is deleted
+    private Boolean cleanupSubscription;
 }
